@@ -1,192 +1,184 @@
 {
-  "meta": {
-    "instanceId": "chatgpt-n8n-ai-agent",
-    "version": "1"
-  },
-  "workflows": [
+  "id": "1",
+  "name": "AI Agent Daily Summary",
+  "active": false,
+  "nodes": [
     {
+      "parameters": {
+        "triggerTimes": [
+          {
+            "mode": "everyDay",
+            "hour": 8,
+            "minute": 0
+          }
+        ]
+      },
       "id": "1",
-      "name": "AI Agent Daily Summary",
-      "active": false,
-      "nodes": [
-        {
-          "parameters": {
-            "triggerTimes": [
-              {
-                "mode": "everyDay",
-                "hour": 8,
-                "minute": 0
-              }
-            ]
-          },
-          "id": "1",
-          "name": "Cron",
-          "type": "n8n-nodes-base.cron",
-          "typeVersion": 1,
-          "position": [
-            100,
-            300
-          ]
-        },
-        {
-          "parameters": {
-            "resource": "message",
-            "operation": "getAll",
-            "additionalFields": {
-              "q": "after:yesterday is:inbox"
-            }
-          },
-          "id": "2",
-          "name": "Get Emails",
-          "type": "n8n-nodes-base.gmail",
-          "typeVersion": 1,
-          "position": [
-            300,
-            150
-          ],
-          "credentials": {}
-        },
-        {
-          "parameters": {
-            "calendar": "primary",
-            "operation": "getAll",
-            "timeMin": "={{$today}}T00:00:00Z",
-            "timeMax": "={{$today}}T23:59:59Z"
-          },
-          "id": "3",
-          "name": "Get Calendar Events",
-          "type": "n8n-nodes-base.googleCalendar",
-          "typeVersion": 1,
-          "position": [
-            300,
-            300
-          ],
-          "credentials": {}
-        },
-        {
-          "parameters": {
-            "operation": "getAll"
-          },
-          "id": "4",
-          "name": "Get Google Tasks",
-          "type": "n8n-nodes-base.googleTasks",
-          "typeVersion": 1,
-          "position": [
-            300,
-            450
-          ],
-          "credentials": {}
-        },
-        {
-          "parameters": {
-            "model": "gpt-4o",
-            "prompt": "Act\u00faa como un asistente de productividad para un portfolio manager. Resume y prioriza las siguientes tareas:\n\nCorreos:\n{{$node[\"Get Emails\"].json}}\n\nEventos de calendario:\n{{$node[\"Get Calendar Events\"].json}}\n\nTareas:\n{{$node[\"Get Google Tasks\"].json}}\n\nDevuelve un resumen estructurado y acciones recomendadas para el d\u00eda."
-          },
-          "id": "5",
-          "name": "GPT Summary",
-          "type": "n8n-nodes-base.openai",
-          "typeVersion": 1,
-          "position": [
-            550,
-            300
-          ],
-          "credentials": {}
-        },
-        {
-          "parameters": {
-            "resource": "message",
-            "operation": "send",
-            "to": "tu-email@tuempresa.com",
-            "subject": "Resumen diario automatizado",
-            "text": "={{$node[\"GPT Summary\"].json[\"text\"]}}"
-          },
-          "id": "6",
-          "name": "Send Email",
-          "type": "n8n-nodes-base.gmail",
-          "typeVersion": 1,
-          "position": [
-            750,
-            300
-          ],
-          "credentials": {}
-        }
-      ],
-      "connections": {
-        "Cron": {
-          "main": [
-            [
-              {
-                "node": "Get Emails",
-                "type": "main",
-                "index": 0
-              }
-            ],
-            [
-              {
-                "node": "Get Calendar Events",
-                "type": "main",
-                "index": 0
-              }
-            ],
-            [
-              {
-                "node": "Get Google Tasks",
-                "type": "main",
-                "index": 0
-              }
-            ]
-          ]
-        },
-        "Get Emails": {
-          "main": [
-            [
-              {
-                "node": "GPT Summary",
-                "type": "main",
-                "index": 0
-              }
-            ]
-          ]
-        },
-        "Get Calendar Events": {
-          "main": [
-            [
-              {
-                "node": "GPT Summary",
-                "type": "main",
-                "index": 0
-              }
-            ]
-          ]
-        },
-        "Get Google Tasks": {
-          "main": [
-            [
-              {
-                "node": "GPT Summary",
-                "type": "main",
-                "index": 0
-              }
-            ]
-          ]
-        },
-        "GPT Summary": {
-          "main": [
-            [
-              {
-                "node": "Send Email",
-                "type": "main",
-                "index": 0
-              }
-            ]
-          ]
+      "name": "Cron",
+      "type": "n8n-nodes-base.cron",
+      "typeVersion": 1,
+      "position": [
+        100,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "getAll",
+        "additionalFields": {
+          "q": "after:yesterday is:inbox"
         }
       },
-      "createdAt": "2025-05-20T00:00:00.000Z",
-      "updatedAt": "2025-05-20T00:00:00.000Z",
-      "versionId": "1",
-      "settings": {},
-      "tags": []
+      "id": "2",
+      "name": "Get Emails",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 1,
+      "position": [
+        300,
+        150
+      ],
+      "credentials": {}
+    },
+    {
+      "parameters": {
+        "calendar": "primary",
+        "operation": "getAll",
+        "timeMin": "={{$today}}T00:00:00Z",
+        "timeMax": "={{$today}}T23:59:59Z"
+      },
+      "id": "3",
+      "name": "Get Calendar Events",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1,
+      "position": [
+        300,
+        300
+      ],
+      "credentials": {}
+    },
+    {
+      "parameters": {
+        "operation": "getAll"
+      },
+      "id": "4",
+      "name": "Get Google Tasks",
+      "type": "n8n-nodes-base.googleTasks",
+      "typeVersion": 1,
+      "position": [
+        300,
+        450
+      ],
+      "credentials": {}
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o",
+        "prompt": "Act\u00faa como un asistente de productividad para un portfolio manager. Resume y prioriza las siguientes tareas:\n\nCorreos:\n{{$node[\"Get Emails\"].json}}\n\nEventos de calendario:\n{{$node[\"Get Calendar Events\"].json}}\n\nTareas:\n{{$node[\"Get Google Tasks\"].json}}\n\nDevuelve un resumen estructurado y acciones recomendadas para el d\u00eda."
+      },
+      "id": "5",
+      "name": "GPT Summary",
+      "type": "n8n-nodes-base.openai",
+      "typeVersion": 1,
+      "position": [
+        550,
+        300
+      ],
+      "credentials": {}
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "to": "tu-email@tuempresa.com",
+        "subject": "Resumen diario automatizado",
+        "text": "={{$node[\"GPT Summary\"].json[\"text\"]}}"
+      },
+      "id": "6",
+      "name": "Send Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 1,
+      "position": [
+        750,
+        300
+      ],
+      "credentials": {}
     }
-  ]
+  ],
+  "connections": {
+    "Cron": {
+      "main": [
+        [
+          {
+            "node": "Get Emails",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Calendar Events",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Google Tasks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Emails": {
+      "main": [
+        [
+          {
+            "node": "GPT Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Calendar Events": {
+      "main": [
+        [
+          {
+            "node": "GPT Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Google Tasks": {
+      "main": [
+        [
+          {
+            "node": "GPT Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT Summary": {
+      "main": [
+        [
+          {
+            "node": "Send Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-05-20T00:00:00.000Z",
+  "updatedAt": "2025-05-20T00:00:00.000Z",
+  "versionId": "1",
+  "settings": {},
+  "tags": []
 }
